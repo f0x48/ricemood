@@ -1,0 +1,26 @@
+{
+  "name": "ricemood",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/color": "^3.0.0",
+    "@types/mime": "^2.0.1",
+    "color": "^3.1.2",
+    "colorthief": "^2.3.0",
+    "get-pixels": "^3.3.2",
+    "json-beautify": "^1.1.1",
+    "mime": "^2.4.4",
+    "mmmagic": "^0.5.3",
+    "node-vibrant": "^3.1.4"
+  },
+  "devDependencies": {
+    "canvas": "^2.6.0"
+  }
+}
