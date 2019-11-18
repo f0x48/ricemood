@@ -3,7 +3,7 @@ import { RMSwatchGenerator, alias, RMSwatch } from '../lib/get-swatch'
 import { Options } from 'node-vibrant/lib/typing'
 
 const aliases:alias[] = [
-  ["V", "Vibranssat"],
+  ["V", "Vibrant"],
   ["LV", "LightVibrant"],
   ["DV", "DarkVibrant"],
   ["M", "Muted"],

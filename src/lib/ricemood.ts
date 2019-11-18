@@ -1,8 +1,8 @@
-import { Palette } from "node-vibrant/lib/color";
 import Color = require("color");
-import { parsePipe } from "./color-pipe";
+import { parsePipe } from "./parse-pipe";
 import { parseFormat } from "./parse-format";
 import { RMSwatch, parseSwatchStr } from "./get-swatch";
+import { syntaxErr } from "./log";
 
 interface variableParsersReturn {
   error?: string;
@@ -10,17 +10,14 @@ interface variableParsersReturn {
 }
 
 export class RMParser {
-  file: string;
   palette: RMSwatch[];
   delimiter: String[];
   delimiterRegExp: RegExp;
 
   constructor(
-    file: string,
     palette: RMSwatch[],
     delimiter: string[] = ["\\$RM", "\\$"]
   ) {
-    this.file = file;
     this.palette = palette;
     this.delimiter = delimiter;
     this.delimiterRegExp = new RegExp(
@@ -28,12 +25,12 @@ export class RMParser {
       "gm"
     )
   }
-  parseFile(): String {
-    return this.file.replace(
+  parseFile(file:string): String {
+    return file.replace(
       this.delimiterRegExp,
       (_match: string, capture: string): any => {
         const result: variableParsersReturn = this.variableParsers(capture);
-        if (result.error) console.error(result.error);
+        if (result.error) syntaxErr(result.error);
         if (result.str) return result.str;
         // Force Exit if there is nothing to return.
         return process.exit(1);
