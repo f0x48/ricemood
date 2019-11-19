@@ -17,8 +17,8 @@ const ColorProperties: colorProperties[] = [
   ["btc", "bodyTextColor", c => Color(bodyTextColor(c.rgb().array()))],
   ["ttc", "titleTextColor", c => Color(titleTextColor(c.rgb().array()))],
 
-  ["dk", "darken", (c, p) => c.darken(p), 0.5],
-  ["lg", "lighten", (c, p) => c.lighten(p), 0.5],
+  ["da", "darken", (c, p) => c.darken(p), 0.5],
+  ["li", "lighten", (c, p) => c.lighten(p), 0.5],
 
   ["de", "desaturate", (c, p) => c.desaturate(p), 0.5],
   ["sa", "saturate", (c, p) => c.saturate(p), 0.5],

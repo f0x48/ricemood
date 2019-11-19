@@ -1,14 +1,13 @@
 import os = require("os");
-import { join } from "path";
+import { join, dirname } from "path";
 import {
   existsSync,
   mkdirSync,
-  copyFileSync,
   readFileSync,
   writeFileSync
 } from "fs";
 import ini from "ini";
-import { syntaxErr } from "./log";
+import { err } from "./log";
 export { getConfig };
 
 const homeDirectory = os.homedir();
@@ -21,33 +20,51 @@ export const configpath =
 interface RMConfig {
   ini: any;
   cfg: {
-    configpath: string;
-    configfilepath: string;
+    folder: string;
+    file: string;
+    content: string;
   };
 }
 
-function getConfig(configfile?: string): RMConfig | undefined {
-  let config = `\
+function getConfig(customConfigFile?: string): RMConfig | undefined {
+  const cfg = { folder: "", file: "", content: "" };
+  cfg.content = `\
 ; both are RegExp
 tag_start = \\$RM
 tag_end   = \\$
+; x times image scaled down ; 1 mean original
+quality   = 1
 ; automatically get wallpaper ($WALLPAPER)
 imagefile = $WALLPAPER`;
 
-  if (configpath) {
+  // if custom config file is provided
+  if(customConfigFile) {
+    cfg.folder = dirname(customConfigFile)
+    cfg.file = customConfigFile
+
+    // check if the file existt
+    if(!existsSync(cfg.file)) err(`${cfg.file} doesn't exist`)
+
+    cfg.content = readFileSync(cfg.file).toString()
+  }
+  else if(configpath) {
+
+    // get the config folder
     const ricemoodConfigPath = join(configpath, "ricemood");
+    cfg.folder = ricemoodConfigPath
+    // create the config folder if not exist yet
     if (!existsSync(ricemoodConfigPath)) mkdirSync(ricemoodConfigPath);
-    const cfg = { folder: ricemoodConfigPath, file: "", content: "" };
+    
+    // ricemoon.ini is the config file
     cfg.file = join(cfg.folder, "ricemood.ini");
 
     // write default config if file not exist
-    if (!existsSync(cfg.file)) writeFileSync(cfg.file, config);
-    else config = readFileSync(cfg.file).toString();
-
-    cfg.content = config;
-    return parse(config, cfg);
+    if (!existsSync(cfg.file)) writeFileSync(cfg.file, cfg.content);
+    else cfg.content = readFileSync(cfg.file).toString();
   }
-  syntaxErr("Config File not Found");
+  // parse the config and return
+  return {ini:ini.parse(cfg.content),cfg}
+  err("Config File not Found");
 }
 
 function parse(config: string, cfg: object): any {

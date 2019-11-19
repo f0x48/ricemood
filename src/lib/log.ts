@@ -1,4 +1,4 @@
-export function syntaxErr(...msg:any[]) {
+export function err(...msg:any[]) {
   console.error(`[ricemood-parser]`,...msg,'Exitting...')
   process.exit()
 }

@@ -1,7 +1,7 @@
 import Color = require("color");
 
 
-type dictItem = [string|RegExp,{(clr:Color) : string}]
+type dictItem = [string|RegExp,{(clr:Color,p:any) : string}]
 
 /**
  * Example : rgb(--)
@@ -9,6 +9,17 @@ type dictItem = [string|RegExp,{(clr:Color) : string}]
  * Match[3] : --
  */
 const regex = /(\w{0,3})(\(.*?\))?/
+const dict:dictItem[] = [
+  ["rgb",(c,p) => c.rgb().array().join(p)],
+  ["hsl",(c,p) => c.hsl().array().join(p)],
+  ["hex",c => c.hex().slice(1)],
+  [/^r/, c => c.red().toString()],
+  [/^g/, c => c.green().toString()],
+  [/^b/, c => c.blue().toString()],
+  [/^h/, c => c.hue().toString()],
+  [/^s/, c => c.saturationl().toString()],
+  [/^l/, c => c.lightness().toString()],
+]
 
 export function parseFormat(str:string,color:Color) : string {
 
@@ -19,22 +30,14 @@ export function parseFormat(str:string,color:Color) : string {
   
   const format = match[1]
   const param = match[3]
-  
-  const dict:dictItem[] = [
-    ["rgb",c => c.rgb().array().join(param)],
-    ["hsl",c => c.hsl().array().join(param)],
-    [/^r/, c => c.red().toString()],
-    [/^g/, c => c.green().toString()],
-    [/^b/, c => c.blue().toString()],
-    [/^h/, c => c.hue().toString()],
-    [/^s/, c => c.saturationl().toString()],
-    [/^l/, c => c.lightness().toString()],
-  ]
 
+  
   for(let [id,proc] of dict) {
+    // use regex if the id is regex use equal if string
     if((id instanceof RegExp && id.test(format)) || (id == format)) {
-      return proc(color)
+      return proc(color,param)
     } 
   }
-  return color.hex().slice(1)
+  // if no match, just return hex
+  return color.hex()
 }

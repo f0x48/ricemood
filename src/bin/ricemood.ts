@@ -1,14 +1,13 @@
 import P = require("commander");
 
-P.usage(`${process.argv.slice(0, 1).join(" ")} [options]`)
-  .option("-i, --image <path>", "path to target image")
+P.option("-i, --image <path>", "path to target image")
   .option("-f, --file <path>", "path to file that gonna be parsed ")
   .option("-s, --swatch <path>", "path to swatch json file ")
   .option("-a, --apply [file]", "apply from configuration file")
   .parse(process.argv);
 
 const O = P.opts();
-
+// check if any options provided
 if (Object.values(O).filter(v => v != undefined).length < 1) {
   const helpStr = `
        _
@@ -21,8 +20,7 @@ if (Object.values(O).filter(v => v != undefined).length < 1) {
  | | | | | | (_) | (_) | (_| |
  |_| |_| |_|\\___/ \\___/ \\__,_|
 
-${P.helpInformation()}
-`;
+${P.helpInformation()}`;
   P.helpInformation = () => helpStr;
   P.help();
 }
@@ -64,14 +62,15 @@ async function parseFull(imagepath: string, filepath: string) {
 }
 
 async function applyFromConfigFile(configfile: any) {
-  const config = await getConfig();
+  if(typeof configfile == "boolean") configfile = undefined
+  const config = await getConfig(configfile);
   const { applyConfig } = await import("../lib/apply-config");
 
-  if(config) applyConfig(config.ini, config.cfg);
+  if (config) applyConfig(config.ini, config.cfg);
 }
 
 function parseFromProvidedSwatch(imagepath: string, swatch: any) {}
 
-async function getConfig() {
-  return (await import("../lib/config")).getConfig();
+async function getConfig(cfgfile: string) {
+  return (await import("../lib/config")).getConfig(cfgfile);
 }
