@@ -40,7 +40,7 @@ Options:
 Opening tag : ^r  
 Closing tag : ^
 ```
-```
+
 
 ## Function symbol
 
@@ -108,4 +108,5 @@ These screenshots have the same configuration file
 ![sample1](sample/example-1.png)
 ![sample1](sample/example-3.png)
 ![sample1](sample/example-5.png)
+![sample1](sample/example-6.png)
 ```
