@@ -1,10 +1,11 @@
 # ricemood
+> this tool is not plug and play.
 
 So you change your wallpaper? Of course you want the rice to match your wallpaper.
 
 This tool is built for automate changing color manually. It basically templating engine for the color in configuration file.
 
-## Quick Link > [Installation]() | [Example File]()
+## Quick Link > [Installation]() | [Example File](sample/)
 
 You can set it to your :
 
@@ -26,50 +27,19 @@ You can set it to your :
  | | | | | | (_) | (_) | (_| |
  |_| |_| |_|\___/ \___/ \__,_|
 
-
 Usage: ricemood [options]
 
 Options:
-  -i, --image <path>  path to target image
-  -f, --file <path>   path to file that gonna be parsed
-  -h, --help          output usage information
+  -i, --image <path>   path to target image
+  -f, --file <path>    path to file that gonna be parsed 
+  -s, --swatch <path>  path to swatch json file 
+  -a, --apply [file]   apply from configuration file
+  -h, --help           output usage information
 ```
-
-## Example File
-
-> i3 config file
-
-Input :
-
-```javascript
-...
-# class                 border   bground  text        indicator child_border
-client.focused          ^r@V^   ^r@V^     ^r@V>ttc^   ^r@LV^    ^r@V^
-client.focused_inactive ^r@bg^  ^r@bg^    ^r@bg>ttc^  ^r@DV^    ^r@DM^
-client.unfocused        ^r@bg^  ^r@bg^    ^r@V^       ^r@DV^    ^r@DM^
-client.urgent           ^r@LV^  ^r@bg^    ^r@bg>ttc^  ^r@DV^    ^r@LV^
-client.placeholder      ^r@bg^  ^r@bg^    ^r@bg>ttc^  ^r@DV^    ^r@DM^
-client.background       ^r@V^
-...
 ```
-
-Output :
-
-```javascript
-...
-# class                 border   bground  text        indicator child_border
-client.focused          #D73126   #D73126     #FFFFFF   #F8EEBB    #D73126
-client.focused_inactive #1F232E  #1F232E    #FFFFFF  #6A2219    #3B4357
-client.unfocused        #1F232E  #1F232E    #D73126       #6A2219    #3B4357
-client.urgent           #F8EEBB  #1F232E    #FFFFFF  #6A2219    #F8EEBB
-client.placeholder      #1F232E  #1F232E    #FFFFFF  #6A2219    #3B4357
-
-...
-```
-
-```
-Opening tag : ^r
+Opening tag : ^r  
 Closing tag : ^
+```
 ```
 
 ## Function symbol
@@ -138,3 +108,4 @@ These screenshots have the same configuration file
 ![sample1](sample/example-1.png)
 ![sample1](sample/example-3.png)
 ![sample1](sample/example-5.png)
+```

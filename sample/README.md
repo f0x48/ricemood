@@ -1,5 +1,5 @@
 
-run ```ricemood -a``` to generate config file    
+## run ```ricemood -a``` to generate config file    
 Ricemood configuration file is located at :
 `~/.config/ricemood/ricemood.ini`
 
@@ -10,15 +10,18 @@ Example `ricemood.ini`
 tag_start = \^r
 tag_end   = \^
 
-; automatically get wallpaper ($WALLPAPER)
-imagefile = $WALLPAPER
+; built in script to get wallpaper 
+; $feh, $nitrogen
+imagefile = $nitrogen
+; imagefile_script = getmybg
 
 [const]
 ; you can add variables here
 ; you can define that like this "@bg"
 bg = '@DM>l(15)'
+fg = '@V>l(80)'
 
-;here is the configuration file that gonna be parsed
+;here is the configuration for config file that gonna be parsed
 [kitty]
 filename = kitty.conf
 realfilepath = /home/fhadiel/.config/kitty/ricemood-theme.conf
@@ -33,9 +36,10 @@ Example directory structure :
 
 ```
 /home/fhadiel/.config/ricemood
-├── i3.conf
-├── kitty.conf
-└── ricemood.ini
+├── getmybg < example script to get background
+├── i3.conf < template for i3 config
+├── kitty.conf < template for kitty terminal
+└── ricemood.ini < ricemood config file
 ```
 
 Example configuration file:  
@@ -103,4 +107,12 @@ bar {
     binding_mode       ^r@bg^   ^r@LV^      ^r@LV>ttc^
   }
 }
+```
+```getmybg```
+```python 
+#!/usr/bin/env python
+import re
+file = open('/home/fhadiel/.fehbg').read()
+wall = re.search("--bg[-\w]+ '(.*?)'",file)
+print(wall.group(1) 
 ```

@@ -1,13 +1,16 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
 import { err, log } from "./log";
-import { getSwatch } from "./get-swatch";
 import { join, basename } from "path";
-import { RMParser } from "./ricemood";
+import { RMParser } from "./ricemood"
+import { getWallpaperFromConfigVariable } from "./wallpaper-grabber";
+import { execFileSync, execSync } from "child_process";
+import { resolvePath } from "../lib/fs-plus";
+
 
 interface configStructure {
   start_tag?: string;
   end_tag?: string;
   imagefile: string;
+  imagefile_script: string;
   const: { [key: string]: string };
   quality: number;
   [key: string]:
@@ -26,17 +29,30 @@ async function applyConfig(c: configStructure, cfgPath: any) {
   const items = Object.keys(c).filter(
     k => c[k] instanceof Object && !excludeObj.includes(k)
   );
+  if (items.length < 1)
+    err(`There is no configured file yet. Please edit ${cfgPath.file} first.`);
+
+  if(c.imagefile_script) {
+    c.imagefile = execFileSync(join(cfgPath.folder,c.imagefile_script)).toString()
+    c.imagefile = c.imagefile.trim()
+  }
   // Get Image from wallpaper if possible
-  if (c.imagefile == "$WALLPAPER") {
-    const { get } = await import("wallpaper");
-    c.imagefile = await get();
+  else if (c.imagefile.startsWith("$")) {
+    const imageFromGrabber = getWallpaperFromConfigVariable(c.imagefile)
+    if(imageFromGrabber) c.imagefile = resolvePath(imageFromGrabber)
     log("getting wallpaper...");
   }
+
+  // Optimize load speed
+  const { existsSync, readFileSync, writeFileSync } = await import("fs");
+  const { getSwatch } = await import("./get-swatch");
 
   // check if image exists
   if (!(c.imagefile && existsSync(c.imagefile)))
     err(`imagefile ${c.imagefile} not found`);
 
+  
+  displayImage(c.imagefile)
   // Take the color palette from the image
   log(`getting color for ${basename(c.imagefile)}`);
   const swatch = await getSwatch(c.imagefile, c.quality);
@@ -51,6 +67,7 @@ async function applyConfig(c: configStructure, cfgPath: any) {
     const appliedConst = applyConst(c.const, parser);
     log(`Providing variable ${appliedConst.join(", ")}`);
   }
+  items.map(v=>c[v].realfilepath = resolvePath(c[v].realfilepath))
   log(`[CAUTION]
 This app is really buggy, this step will overwrite
 
@@ -110,5 +127,9 @@ function applyConst(obj: consts, parser: RMParser): string[] {
     }
   }
   return swatches;
+}
+function displayImage(path:string) {
+  if(process.env.TERM && process.env.TERM == "xterm-kitty")
+    execSync(`kitty +kitten icat "${path}"`)
 }
 export { applyConfig };

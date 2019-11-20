@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import P = require("commander");
 
 P.option("-i, --image <path>", "path to target image")
