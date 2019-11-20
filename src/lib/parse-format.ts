@@ -8,7 +8,7 @@ type dictItem = [string|RegExp,{(clr:Color,p:any) : string}]
  * Match[1] : rgb
  * Match[3] : --
  */
-const regex = /(\w{0,3})(\(.*?\))?/
+const regex = /\#(\w{0,3})(\(.*?\))?/
 const dict:dictItem[] = [
   ["rgb",(c,p) => c.rgb().array().join(p)],
   ["hsl",(c,p) => c.hsl().array().join(p)],

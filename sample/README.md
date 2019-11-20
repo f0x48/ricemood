@@ -1,4 +1,3 @@
-
 ## run ```ricemood -a``` to generate config file    
 Ricemood configuration file is located at :
 `~/.config/ricemood/ricemood.ini`

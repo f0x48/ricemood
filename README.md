@@ -1,12 +1,23 @@
 # ricemood
 > this tool is not plug and play.
 
-So you change your wallpaper? Of course you want the rice to match your wallpaper.
+The purpose of this tool is to match your color scheme with your wallpaper.
 
-This tool is built for automate changing color manually. It basically templating engine for the color in configuration file.
+How this work?  
+in regular configuration file you write color like this:  
+```color0 #FFFFFF```  
 
-## Quick Link > [Installation]() | [Example File](sample/)
+ricemood take file containing something like this:  
+```color0 ^r@Vibrant>lighten(10)^```  
+parse that file and overwrite the original configuration file
 
+With help of these amazing library:
+ * [node-vibrant](https://github.com/akfish/node-vibrant) for generating very meaningful colors from an image
+  * [color](https://github.com/Qix-/color) for providing functions to filter colors
+
+## Quick Link > [Example File](sample/)
+
+## Installation : ```npm install -g ricemood```  
 You can set it to your :
 
 1. i3 config
