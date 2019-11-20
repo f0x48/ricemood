@@ -26,7 +26,7 @@ export function parseFormat(str:string,color:Color) : string {
   const match = str.match(regex)
 
   // just give hex and remove the hash if no match found
-  if(!match) return color.hex().slice(1)
+  if(!match) return color.hex()
   
   const format = match[1]
   const param = match[3]
