@@ -1,6 +1,6 @@
 {
   "name": "ricemood",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "So you change your wallpaper? Of course you want the rice to match your wallpaper",
   "main": "dist/lib/ricemood.js",
   "scripts": {

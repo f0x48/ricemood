@@ -15,7 +15,7 @@ With help of these amazing library:
  * [node-vibrant](https://github.com/akfish/node-vibrant) for generating very meaningful colors from an image
   * [color](https://github.com/Qix-/color) for providing functions to filter colors
 
-## Quick Link > [Example File](sample/)
+## Quick Link > [Example File](sample/) | [My Own Setup](https://github.com/fhadiel/F0x48/tree/master/.config/ricemood)
 
 ## Installation : ```npm install -g ricemood```  
 You can set it to your :

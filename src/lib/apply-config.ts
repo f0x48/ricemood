@@ -1,10 +1,9 @@
 import { err, log } from "./log";
-import { join, basename } from "path";
-import { RMParser } from "./ricemood"
+import { join, basename, resolve } from "path";
+import { RMParser } from "./ricemood";
 import { getWallpaperFromConfigVariable } from "./wallpaper-grabber";
-import { execFileSync, execSync } from "child_process";
+import { execFileSync, execSync, spawnSync } from "child_process";
 import { resolvePath } from "../lib/fs-plus";
-
 
 interface configStructure {
   start_tag?: string;
@@ -26,20 +25,22 @@ async function applyConfig(c: configStructure, cfgPath: any) {
   const excludeObj = ["const"];
 
   // get keys from ini file
-  const items = Object.keys(c).filter(
+  let items = Object.keys(c).filter(
     k => c[k] instanceof Object && !excludeObj.includes(k)
   );
   if (items.length < 1)
     err(`There is no configured file yet. Please edit ${cfgPath.file} first.`);
 
-  if(c.imagefile_script) {
-    c.imagefile = execFileSync(join(cfgPath.folder,c.imagefile_script)).toString()
-    c.imagefile = c.imagefile.trim()
+  if (c.imagefile_script) {
+    c.imagefile = execFileSync(
+      join(cfgPath.folder, c.imagefile_script)
+    ).toString();
+    c.imagefile = c.imagefile.trim();
   }
   // Get Image from wallpaper if possible
   else if (c.imagefile.startsWith("$")) {
-    const imageFromGrabber = getWallpaperFromConfigVariable(c.imagefile)
-    if(imageFromGrabber) c.imagefile = resolvePath(imageFromGrabber)
+    const imageFromGrabber = getWallpaperFromConfigVariable(c.imagefile);
+    if (imageFromGrabber) c.imagefile = resolvePath(imageFromGrabber);
     log("getting wallpaper...");
   }
 
@@ -51,8 +52,7 @@ async function applyConfig(c: configStructure, cfgPath: any) {
   if (!(c.imagefile && existsSync(c.imagefile)))
     err(`imagefile ${c.imagefile} not found`);
 
-  
-  displayImage(c.imagefile)
+  displayImage(c.imagefile);
   // Take the color palette from the image
   log(`getting color for ${basename(c.imagefile)}`);
   const swatch = await getSwatch(c.imagefile, c.quality);
@@ -67,7 +67,17 @@ async function applyConfig(c: configStructure, cfgPath: any) {
     const appliedConst = applyConst(c.const, parser);
     log(`Providing variable ${appliedConst.join(", ")}`);
   }
-  items.map(v=>c[v].realfilepath = resolvePath(c[v].realfilepath))
+  items.forEach(v => {
+    c[v].filename = resolvePath(join(cfgPath.folder,c[v].filename));
+    c[v].realfilepath = resolvePath(c[v].realfilepath)
+  });
+
+  // check if source file is the same as target file
+  
+  items.forEach(v => {
+    if (resolve(c[v].realfilepath, c[v].filename) == '')
+      err(`[${v}] ${c[v].filepath} is overwriting itself. Aborting`);
+  });
   log(`[CAUTION]
 This app is really buggy, this step will overwrite
 
@@ -91,9 +101,6 @@ Do you want to proceed? press Y to continue`);
         !itemo[v] ? err(`item [${item}] didn't have ${v}`) : null
       );
 
-      // item filename is relative to configuration file directory
-      itemo.filename = join(cfgPath.folder, itemo.filename);
-
       // read and parse the file
       if (existsSync(itemo.filename)) {
         const parsedFile = parser.parseFile(
@@ -105,6 +112,14 @@ Do you want to proceed? press Y to continue`);
         writeFileSync(itemo.realfilepath, parsedFile);
       }
     }
+
+    for(let key of items) {
+      if('onfinish' in c[key]) {
+        log(`[${key}] executing task ${c[key]['onfinish']}`)
+        const output = execSync(c[key]['onfinish'])
+        log(output.toString())
+      }
+    } 
     log(`Enjoy your new theme!`);
   });
 }
@@ -128,8 +143,8 @@ function applyConst(obj: consts, parser: RMParser): string[] {
   }
   return swatches;
 }
-function displayImage(path:string) {
-  if(process.env.TERM && process.env.TERM == "xterm-kitty")
-    execSync(`kitty +kitten icat "${path}"`)
+function displayImage(path: string) {
+  if (process.env.TERM && process.env.TERM == "xterm-kitty")
+    execSync(`kitty +kitten icat "${path}"`);
 }
 export { applyConfig };
